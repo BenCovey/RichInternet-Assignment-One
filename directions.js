@@ -1,7 +1,9 @@
-var g_html
+var g_html;
+var origin;
+var destination;
 function displaydirections() {
-    var origin = document.getElementById("origin");
-    var destination = document.getElementById("destination");
+    origin = document.getElementById("origin");
+    destination = document.getElementById("destination");
     
     // Validation
     if (!origin.checkValidity()) {
@@ -29,6 +31,10 @@ function displaydirections() {
     xhttp.onloadend = function() {
         spinner.style.display = "none";
     }
+    var porigin = document.getElementById('origindiv');
+    var pdestination = document.getElementById('destinationdiv');
+    porigin.innerHTML = "<div class= 'well well-sm'>" + "Leave " + origin + "</div>";
+    pdestination.innerHTML = "<div class= 'well well-sm'>" + "Arrive at " +  destination + "</div>";
     // Could display progress bar as data is loading.
     var yql = "https://maps.googleapis.com/maps/api/directions/xml?origin=" + origin +
         "&destination=" + destination + "&key=AIzaSyAQLrqyOK42M1juBuy9SY4DUVPdqnlVeEA";
@@ -50,13 +56,14 @@ function loadData(response) {
         var direc = directions[i];
        
         if (direc != null) {
-            displayDirections(direc, i);
+            displayDirections(direc, i, directions.length);
         }
     }
 
 }
 
-function displayDirections(direc, num) {
+function displayDirections(direc, num, maxnum) {
+    var panel = document.getElementById("directions");
     //Directions
     var directions = direc.getElementsByTagName("html_instructions")[0];
     var nodeD = directions.childNodes[0];
@@ -75,6 +82,6 @@ function displayDirections(direc, num) {
         g_html += "<div class='well' id='step"+num+"'> " + nodeD.nodeValue +" "  +
     nodeDist.nodeValue  + " or " + nodeDur.nodeValue +  "</div>";
     }
-    var panel = document.getElementById("directions");
+    
     panel.innerHTML = g_html;
 }
