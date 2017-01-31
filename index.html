@@ -2,43 +2,41 @@
     <head>
        <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+        <!-- Link to Font Awesome -->
+        <link rel="stylesheet" href="C:/Users/benvc/Desktop/Rich Internet Application/Assignment 1/font-awesome/css/font-awesome.min.css">
+        
         <!-- Optional theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
+        <script src="directions.js"></script>
         <title>Google Direction API</title>
     </head>
     <body>
+        <script src="directions.js"></script>
         <div class= "header text-center">
             <h1>Google Directions API</h1>
         </div>
         <div class= "container">
             <div class="col-sm-2"></div>
             <div class="col-sm-4" >
-                
                 <div class="card well well-lg ">
                     <form id="directionsform">
                         <label>Origin</label><br>
-                        <input class = "form-control" type="text" id="origin" required><br><br>
+                        <input class = "form-control" type="text" id="origin" required ><br><br>
                         <label>Destination</label><br>
-                        <input class = "form-control" type="text" id="destination" required><br><br>
-                        <input  class="btn " type="button" id="search" value="Travel" onclick="displaydirections();" style="margin-left:40%;margin-right:50%;">
+                        <input class = "form-control" type="text" id="destination" required ><br><br>
+                        <input class="btn" type="button" id="search" value="Travel" onclick="displaydirections();" style="margin-left:40%;margin-right:50%;">
                     </form>
                 </div>
             </div>
             <div class="col-sm-4" >
                 <div  id="origindiv">
-                    
                 </div>
                 <div class="card" id="directions">
-                    
                     <!--Directions -->
                 </div>
                 <div id="destinationdiv">
-                    
                 </div>
             </div>
         </div>
-        <script src="directions.js"></script>
     </body>
 </html>
