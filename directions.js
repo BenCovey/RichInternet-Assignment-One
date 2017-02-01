@@ -4,11 +4,12 @@ var destination;
 var time = 0;
 var hours = 0;
 var minutes = 0;
+var transit;
 var spinner = document.getElementById("loader");
 function displaydirections() {
     origin = document.getElementById("origin");
     destination = document.getElementById("destination");
-    
+    transit = document.getElementById("transit").checked;
     // Validation
     if (!origin.checkValidity()) {
        alert("ERROR: Origin Field");
@@ -18,6 +19,7 @@ function displaydirections() {
         alert("ERROR: Destination Field");
         return;
     }
+    
     origin = origin.value;
     destination = destination.value;
     var xhttp = new XMLHttpRequest();
@@ -30,15 +32,19 @@ function displaydirections() {
         }
     };
     xhttp.onerror = function(err) {
-        alert("Error loading direction data" + err);
+        console.log("Error loading direction data" + err);
     }
     xhttp.onloadend = function() {
     }
     
-    
+    if(transit == false){
     // Could display progress bar as data is loading.
-    var yql = "https://maps.googleapis.com/maps/api/directions/xml?origin=" + origin +
-        "&destination=" + destination + "&key=AIzaSyAQLrqyOK42M1juBuy9SY4DUVPdqnlVeEA";
+        var yql = "https://maps.googleapis.com/maps/api/directions/xml?origin=" + origin +
+            "&destination=" + destination + "&key=AIzaSyAQLrqyOK42M1juBuy9SY4DUVPdqnlVeEA";
+    }else{
+        var yql = "https://maps.googleapis.com/maps/api/directions/xml?origin=" + origin +
+        "&destination=" + destination + "&mode=transit&key=AIzaSyAQLrqyOK42M1juBuy9SY4DUVPdqnlVeEA";
+    }
     xhttp.open("GET", yql, true);
     xhttp.send();
 }
@@ -51,7 +57,8 @@ function loadData(response) {
     }
     
     var directions = xmlDoc.getElementsByTagName("step");
-    
+    console.log(xmlDoc);
+    //console.log(directions);
     if (directions.length === 0) {
         alert("No Direction Data.");
     }
@@ -59,12 +66,15 @@ function loadData(response) {
         var direc = directions[i];
        
         if (direc != null) {
+            try{
             displayDirections(direc, i, directions.length);
+            }catch(err){
+                console.log(err);
+            }
         }
     }
     try{
         var realtime = Math.ceil(time/60);
-        console.log(parseInt(realtime));
         minutes = Math.ceil(realtime);
         if(minutes > 59){
             hours = parseInt(minutes%60);
@@ -93,35 +103,98 @@ function loadData(response) {
 function displayDirections(direc, num, maxnum) {
     var panel = document.getElementById("directions");
     //Directions
-    var directions = direc.getElementsByTagName("html_instructions")[0];
-    var nodeD = directions.childNodes[0];
-    //Distance
-    var distance = direc.getElementsByTagName("distance")[0];
-    var distsub = distance.getElementsByTagName("text")[0];
-    var nodeDist = distsub.childNodes[0];
-    //Time
-    var duration = direc.getElementsByTagName("duration")[0];
-    var timesub = duration.getElementsByTagName("value")[0]
-    var nodeTime = timesub.childNodes[0];
-    time += parseInt(nodeTime.nodeValue);
-    //Duration
-    var dursub = duration.getElementsByTagName("text")[0];
-    var nodeDur = dursub.childNodes[0];
-    //Mode
-    var travelmde = direc.getElementsByTagName("travel_mode")[0];
-    var nodeMode = travelmde.childNodes[0];
-    text = (nodeMode.nodeValue);
-    text = getModeImage(text);
-    if(g_html == null){
-        g_html = "<div class='well' id='step"+num+"'>" + text  + " " + nodeD.nodeValue +" "  +
-    nodeDist.nodeValue  + " or " + nodeDur.nodeValue +  "</div>";
+    if(transit == false){
+        var directions = direc.getElementsByTagName("html_instructions")[0];
+        var nodeD = directions.childNodes[0];
+        //Distance
+        var distance = direc.getElementsByTagName("distance")[0];
+        var distsub = distance.getElementsByTagName("text")[0];
+        var nodeDist = distsub.childNodes[0];
+        //Time
+        var duration = direc.getElementsByTagName("duration")[0];
+        var timesub = duration.getElementsByTagName("value")[0]
+        var nodeTime = timesub.childNodes[0];
+        time += parseInt(nodeTime.nodeValue);
+        //Duration
+        var dursub = duration.getElementsByTagName("text")[0];
+        var nodeDur = dursub.childNodes[0];
+        //Mode
+        var travelmde = direc.getElementsByTagName("travel_mode")[0];
+        var nodeMode = travelmde.childNodes[0];
+
+        text = (nodeMode.nodeValue);
+        text = getModeImage(text);
+        if(g_html == null){
+            g_html = "<div class='well' id='step"+num+"'>" + text  + " " + nodeD.nodeValue +" "  +
+        nodeDist.nodeValue  + " or " + nodeDur.nodeValue +  "</div>";
+        }else{
+            g_html += "<div class='well' id='step"+num+"'>" + text  + " " + nodeD.nodeValue +" "  +
+        nodeDist.nodeValue  + " or " + nodeDur.nodeValue +  "</div>";
+        }
     }else{
-        g_html += "<div class='well' id='step"+num+"'>" + text  + " " + nodeD.nodeValue +" "  +
-    nodeDist.nodeValue  + " or " + nodeDur.nodeValue +  "</div>";
+        var directions = direc.getElementsByTagName("html_instructions")[0];
+        //console.log(num + " " +directions.nodeValue);
+        var nodeD = directions.childNodes[0];
+        //console.log(nodeD)
+        //Distance
+        var distance = direc.getElementsByTagName("distance")[0];
+        var distsub = distance.getElementsByTagName("text")[0];
+        var nodeDist = distsub.childNodes[0];
+        //console.log(nodeDist)
+        //Time
+        var duration = direc.getElementsByTagName("duration")[0];
+        var timesub = duration.getElementsByTagName("value")[0]
+        var nodeTime = timesub.childNodes[0];
+        time += parseInt(nodeTime.nodeValue);
+        minutes = parseInt(nodeTime.nodeValue)/60;
+        minutes = Math.ceil(minutes);
+        //console.log(minutes);
+        var hours = 0;
+        if(minutes > 59){
+            hours = parseInt(minutes%60);
+            minutes = parseInt(minutes/hours);
+        }
+        //console.log(minutes + " minutes & " + hours + " hours")
+        //Mode
+        var travelmde = direc.getElementsByTagName("travel_mode")[0];
+        var nodeMode = travelmde.childNodes[0];
+        //console.log("Type: " + nodeMode.nodeValue)
+        text = (nodeMode.nodeValue);
+        text = getModeImage(text);
+        //Bus Num
+        var boolbus = false;
+        try{
+            var bus = direc.getElementsByTagName("short_name")[0];
+            var nodeN = bus.childNodes[0]
+            boolbus = true;
+            //console.log("Bus: " + nodeN.nodeValue);
+        }catch(noBus){
+            var error = noBus;
+            //console.log(error);
+        }
+        if(boolbus == false){
+            if(g_html == null){
+                g_html = "<div class='well' id='step"+num+"'>" + text  + " " + nodeD.nodeValue +" "  +
+            nodeDist.nodeValue  + " or " + nodeTime.nodeValue +  "</div>";
+            }else{
+                g_html += "<div class='well' id='step"+num+"'>" + text  + " " + nodeD.nodeValue +" "  +
+            nodeDist.nodeValue  + " or " + nodeTime.nodeValue +  "</div>";
+            }
+        }else{
+            if(g_html == null){
+                g_html = "<div class='well' id='step"+num+"'>" + text  + " Bus: " + nodeN.nodeValue + " " + nodeD.nodeValue +" "  +
+            nodeDist.nodeValue  + " or " + nodeTime.nodeValue +  "</div>";
+            }else{
+                g_html += "<div class='well' id='step"+num+"'>" + text  + " Bus: " + nodeN.nodeValue + " " + nodeD.nodeValue +" "  +
+            nodeDist.nodeValue  + " or " + nodeTime.nodeValue +  "</div>";
+            }
+        }
+        
+        
     }
-    
     panel.innerHTML = g_html;
 }
+
 
 function getModeImage(text) {
     if (text.match(/DRIVING/i)) {
